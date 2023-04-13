@@ -1,0 +1,77 @@
+#container {
+  text-align: center;
+
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+#container strong {
+  font-size: 20px;
+  line-height: 26px;
+}
+
+#container p {
+  font-size: 16px;
+  line-height: 22px;
+
+  color: #8c8c8c;
+
+  margin: 0;
+}
+
+#container a {
+  text-decoration: none;
+}
+
+.fab-button{
+  padding-bottom: 20px;
+}
+
+// .add-task-button{
+//   // width: 90% ;
+//   // background-color: #3a7be0;
+//   color: white;
+//   // // border: none;
+//   // border-radius: 5%;
+//   // box-shadow: none;
+//   // display: flex;
+//   // justify-content: center;
+//   // align-items: center;
+//   // margin-top: 10px;
+// }
+// .add-task-button  {
+//   border-radius: 0;
+//   width: 100%;
+//    // border-radius: 5%;
+//   background-color: #3a7be0;
+//   box-shadow: none;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   margin-top: 10px;
+//   color: #3a7be0;
+
+// }
+
+.add-task-button  {
+  width: 100%;
+  // background-color: #3a7be0;
+  color: white;
+  border-radius: 0;
+  text-align: center;
+}
+
+ ion-fab-button {
+  --border-radius: 15px;
+  --background: var(--ion-color-primary);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}

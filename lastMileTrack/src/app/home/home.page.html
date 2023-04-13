@@ -1,0 +1,51 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title> LMT </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">LMT</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-item *ngFor="let task of tasks" (click)="redirectToListData()">
+    <ion-label> {{task.task}} </ion-label>
+    <ion-label>{{task.startTime}}</ion-label>
+    <ion-button  color="danger" (click)="onClick()">
+      <ion-icon  name="stop"></ion-icon>
+    </ion-button>
+  </ion-item>
+
+  <ion-fab slot="fixed" vertical="bottom" horizontal="start">
+    <ion-fab-button type="button" (click)="showForm()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+
+    <ion-fab-list side="top">
+      <div>
+        <form #myForm [hidden]="!showTaskForm" (ngSubmit)="addTask()">
+          <ion-item>
+            <ion-label position="floating">Task</ion-label>
+            <ion-input type="text" [(ngModel)]="task" name="task"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Start Time</ion-label>
+            <ion-datetime
+              pickerFormat="h:mm A"
+              display-format="h:mm A"
+              [(ngModel)]="startTime"
+              name="startTime"
+              presentation="time"
+            ></ion-datetime>
+          </ion-item>
+            <ion-fab-button shape="rectangle" icon-only="false" class="add-task-button" type="submit" (click)="addTask()">
+              Add Task
+            </ion-fab-button>
+        </form>
+      </div>
+    </ion-fab-list>
+  </ion-fab>
+</ion-content>
