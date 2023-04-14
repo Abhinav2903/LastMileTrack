@@ -14,8 +14,11 @@
   <ion-item *ngFor="let task of tasks" (click)="redirectToListData()">
     <ion-label> {{task.task}} </ion-label>
     <ion-label>{{task.startTime}}</ion-label>
-    <ion-button  color="danger" (click)="onClick()">
+    <ion-button  *ngIf="task.isShowIcon" color="danger" (click)="onStop($event,task)">
       <ion-icon  name="stop"></ion-icon>
+    </ion-button>
+    <ion-button  *ngIf="!task.isShowIcon" color="success" (click)="onComplete($event)">
+      <ion-icon name="checkmark-circle" class="green-tick"></ion-icon>
     </ion-button>
   </ion-item>
 
