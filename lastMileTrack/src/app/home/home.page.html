@@ -11,44 +11,47 @@
     </ion-toolbar>
   </ion-header>
 
-  <ion-item *ngFor="let task of tasks" (click)="redirectToListData()">
-    <ion-label> {{task.task}} </ion-label>
-    <ion-label>{{task.startTime}}</ion-label>
-    <ion-button  *ngIf="task.isShowIcon" color="danger" (click)="onStop($event,task)">
-      <ion-icon  name="stop"></ion-icon>
+  <ion-item style="display: flex" *ngFor="let task of taskListRecord" (click)="redirectToListData()">
+    <ion-label>{{task.name}}</ion-label>
+
+    <!-- Show the timer if the task is in progress -->
+    <ion-label *ngIf="task.timer!=0">{{task.timer}}</ion-label>
+
+    <ion-button
+      fill="clear"
+      *ngIf="task.isShowIcon"
+      color="danger"
+      (click)="onStart($event,task)"
+    >
+      <ion-icon name="play"></ion-icon>
     </ion-button>
-    <ion-button  *ngIf="!task.isShowIcon" color="success" (click)="onComplete($event)">
+    <ion-button
+      fill="clear"
+      *ngIf="!task.isShowIcon"
+      color="success"
+      (click)="onComplete($event,task)"
+    >
       <ion-icon name="checkmark-circle" class="green-tick"></ion-icon>
     </ion-button>
+
+    <ion-button
+      fill="clear"
+      *ngIf="!task.isShowIcon"
+      color="danger"
+      (click)="onPause($event,task)"
+    >
+      <ion-icon name="pause"></ion-icon>
+    </ion-button>
+
+    <ion-button
+      fill="clear"
+      *ngIf="task.isShowIcon"
+      color="danger"
+      (click)="onResume($event,task)"
+    >
+      <ion-icon name="refresh"></ion-icon>
+    </ion-button>
+
+    <!-- <ion-label>{{task.name}}</ion-label> -->
   </ion-item>
-
-  <ion-fab slot="fixed" vertical="bottom" horizontal="start">
-    <ion-fab-button type="button" (click)="showForm()">
-      <ion-icon name="add"></ion-icon>
-    </ion-fab-button>
-
-    <ion-fab-list side="top">
-      <div>
-        <form #myForm [hidden]="!showTaskForm" (ngSubmit)="addTask()">
-          <ion-item>
-            <ion-label position="floating">Task</ion-label>
-            <ion-input type="text" [(ngModel)]="task" name="task"></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-label position="floating">Start Time</ion-label>
-            <ion-datetime
-              pickerFormat="h:mm A"
-              display-format="h:mm A"
-              [(ngModel)]="startTime"
-              name="startTime"
-              presentation="time"
-            ></ion-datetime>
-          </ion-item>
-            <ion-fab-button shape="rectangle" icon-only="false" class="add-task-button" type="submit" (click)="addTask()">
-              Add Task
-            </ion-fab-button>
-        </form>
-      </div>
-    </ion-fab-list>
-  </ion-fab>
 </ion-content>
