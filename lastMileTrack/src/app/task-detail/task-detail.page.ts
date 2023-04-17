@@ -11,10 +11,40 @@ import { IonicModule } from '@ionic/angular';
   imports: [IonicModule, CommonModule, FormsModule]
 })
 export class TaskDetailPage implements OnInit {
+  startTime: number | undefined;
+  endTime: number | undefined;
+  elapsedTime: number | undefined;
+  startLocation: string | undefined;
+  endLocation: string | undefined;
+  data: any;
+  taskData: any=[];
 
-  constructor() { }
+  constructor() { 
+    console.log("Constructior");
+  }
 
   ngOnInit() {
+    console.log("NGONINT")
+    this.getTaskData();
   }
+
+  getTaskData(){
+    this.taskData.startTime = 0;
+    this.taskData.endTime = 10;
+    this.taskData.elapsedTime = 10;
+    this.taskData.startLocation = "77.25,78.66";
+    this.taskData.endLocation ="77.27,78.67";
+
+    this.taskData.push({
+      startTime: this.taskData.startTime,
+      endTime: this.taskData.endTime,
+      elapsedTime: this.taskData.elapsedTime,
+      startLocation: this.taskData.startLocation,
+      endLocation: this.taskData.endLocation
+    });
+    
+  }
+
+
 
 }

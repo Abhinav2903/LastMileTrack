@@ -43,12 +43,15 @@ export class HomePage {
     private navCtrl: NavController
   ) {}
 
-  onStop(event: Event, task: any) {
-    this.stopTimer(task,event,  'Timer Stopped!');
-  }
+  // onStop(event: Event, task: any) {
+  //   this.stopTimer(task,event,  'Timer Stopped!');
+
+  //   // this.previousTaskAssign(task, event);
+  //   // this.showToast('Timer Stopped!');
+  // }
 
   onPause(event: Event, task: any) {
-    this.stopTimer(task,event,  'Timer Paused!');
+    this.stopTimer(task, event, 'Timer Paused!');
 
     // Store the paused task and its pausedTime value
     const pausedTask = this.pausedTasks.find((t) => t.task === task);
@@ -71,14 +74,17 @@ export class HomePage {
 
     console.log('Paused Time', pausedTime);
     // this.startTimer(task, event,pausedTime);
-        // still remaining the code for if a new task timer is clicked stop the previous timer save it and start new
-        this.previousTaskAssign(task,event,pausedTime);
+    // still remaining the code for if a new task timer is clicked stop the previous timer save it and start new
+    this.previousTaskAssign(task, event, pausedTime);
     event.stopPropagation();
   }
 
   // function on complete button stops the timer after task completion
   onComplete(event: Event, task: any) {
-    this.stopTimer( task,event, 'Task is Completed!');
+    this.stopTimer( task,event, 'Task is Completed!',true);
+
+    // this.previousTaskAssign(task, event);
+    // this.showToast('Task is Completed!');
     // save the time in the storage
   }
 
@@ -100,8 +106,8 @@ export class HomePage {
   onStart(event: Event, task: any) {
     // task.isShowIcon = !task.isShowIcon;
     // this.startTimer(task,event);
-            // still remaining the code for if a new task timer is clicked stop the previous timer save it and start new
-            this.previousTaskAssign(task,event);
+    // still remaining the code for if a new task timer is clicked stop the previous timer save it and start new
+    this.previousTaskAssign(task, event);
     event.stopPropagation();
   }
 
@@ -111,7 +117,7 @@ export class HomePage {
   }
 
   //start the timer according to the pausedtime or from start
-  startTimer(task: any, event:Event,pausedTime: number = 0) {
+  startTimer(task: any, event: Event, pausedTime: number = 0) {
     task.isShowIcon = !task.isShowIcon;
     this.startTime = new Date().getTime() - pausedTime * 1000;
     this.timerInterval = setInterval(() => {
@@ -123,21 +129,33 @@ export class HomePage {
     // this.previousTaskAssign(task,event);
   }
 
-  previousTaskAssign(task: { name: string },event:Event,pausedTime: number = 0) {
-    console.log("Prev Task"+this.prevTask)
-    console.log("task"+task.name)
-    console.log(task.name == this.prevTask)
-    if (typeof this.prevTask==='undefined') {
+  previousTaskAssign(
+    task: {
+      isShowIcon: boolean;
+      name: string;
+    },
+    event: Event,
+    pausedTime: number = 0
+  ) {
+    
+    console.log('task' + task.name);
+    console.log(task.name == this.prevTask);
+    if (typeof this.prevTask === 'undefined'||this.prevTask == 'newTask') {
       this.prevTask = task;
-      this.startTimer(task,event,pausedTime)
+      this.startTimer(task, event, pausedTime);
     } else {
-      if(this.prevTask.name != task.name){
-        this.stopTimer(this.prevTask,event,"New Task Started");
+      if (this.prevTask.name != task.name) {
+        console.log('Prev Task' + this.prevTask.name);
+        console.log("Prev Task icon"+ this.prevTask.isShowIcon)
+        // if(this.prevTask.isShowIcon != true){
+          // this.prevTask.isShowIcon = !this.prevTask.isShowIcon
+        // }
+        this.stopTimer(this.prevTask, event, 'New Task Started');
         this.prevTask = task;
-        this.startTimer(task,event,pausedTime)
-      }else{
+        this.startTimer(task, event, pausedTime);
+      } else {
         this.prevTask = task;
-        this.startTimer(task,event,pausedTime)
+        this.startTimer(task, event, pausedTime);
       }
     }
   }
@@ -149,14 +167,18 @@ export class HomePage {
   }
 
   // stop timer
-  stopTimer(task: any, event: Event, toast?: string) {
-    console.log("TASK STOP",task)
+  stopTimer(task: any, event: Event, toast?: string,direct?:boolean) {
+    console.log('TASK STOP', task);
+    console.log("Task icon",task.isShowIcon)
     task.isShowIcon = !task.isShowIcon;
     event.stopPropagation();
     clearInterval(this.timerInterval);
     this.calculateElapsedTime();
     if (toast) {
       this.showToast(toast);
+    }
+    if(direct){
+      this.prevTask = 'newTask';
     }
   }
 
