@@ -1,16 +1,61 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>taskDetail</ion-title>
+    <ion-title>Task Detail</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-buttons slot="start">
-        <ion-back-button defaultHref="/"></ion-back-button>
-      </ion-buttons>
-      <ion-title>Task Detail</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-card *ngFor="let taskData of taskData; let i =  index ">
+    <ion-card-header>
+      <ion-card-title>Task 1 Count {{i+1}}</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <ion-row>
+        <ion-col>
+          <ion-label>Start Time:</ion-label>
+        </ion-col>
+        <ion-col>
+          <ion-label>{{ taskData.startTime }}</ion-label>
+        </ion-col>
+      </ion-row>
+      
+      <ion-row>
+        <ion-col>
+          <ion-label>End Time:</ion-label>
+        </ion-col>
+        <ion-col>
+          <ion-label>{{ taskData.endTime }}</ion-label>
+        </ion-col>
+      </ion-row>
+      
+      <ion-row>
+        <ion-col>
+          <ion-label>Elapsed Time:</ion-label>
+        </ion-col>
+        <ion-col>
+          <ion-label>{{ taskData.elapsedTime }}</ion-label>
+        </ion-col>
+      </ion-row>
+      
+      <ion-row>
+        <ion-col>
+          <ion-label>Start GPS Location:</ion-label>
+        </ion-col>
+        <ion-col>
+          <ion-label>{{ taskData.startLocation }}</ion-label>
+        </ion-col>
+      </ion-row>
+      
+      <ion-row>
+        <ion-col>
+          <ion-label>Location:</ion-label>
+        </ion-col>
+        <ion-col>
+          <ion-label>{{ taskData.endLocation }}</ion-label>
+        </ion-col>
+      </ion-row>
+      
+    </ion-card-content>
+  </ion-card>
 </ion-content>
