@@ -4,12 +4,15 @@ import { ToastController } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { taskListRecord } from '../constants/taskList.enum';
+import { UserStoreServiceService } from '../service/user-store-service.service';
+import { Storage } from '@ionic/storage-angular';
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
   standalone: true,
   imports: [CommonModule, IonicModule, FormsModule],
+  providers: [UserStoreServiceService,Storage] 
 })
 export class HomePage {
   showTaskForm: boolean | undefined;
@@ -40,8 +43,10 @@ export class HomePage {
 
   constructor(
     private toastController: ToastController,
-    private navCtrl: NavController
-  ) {}
+    private navCtrl: NavController,
+    private storeService:UserStoreServiceService,
+  ) {
+  }
 
   // onStop(event: Event, task: any) {
   //   this.stopTimer(task,event,  'Timer Stopped!');
@@ -82,7 +87,6 @@ export class HomePage {
   // function on complete button stops the timer after task completion
   onComplete(event: Event, task: any) {
     this.stopTimer( task,event, 'Task is Completed!',true);
-
     // this.previousTaskAssign(task, event);
     // this.showToast('Task is Completed!');
     // save the time in the storage
@@ -179,6 +183,7 @@ export class HomePage {
     }
     if(direct){
       this.prevTask = 'newTask';
+      this.storeService.setValue("1",task)
     }
   }
 
