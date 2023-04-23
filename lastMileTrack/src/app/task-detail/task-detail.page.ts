@@ -2,13 +2,18 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
+import { ActivatedRoute } from '@angular/router';
+import { UserStoreServiceService } from '../service/user-store-service.service';
+import { Storage } from '@ionic/storage-angular';
+import { computeStackId } from '@ionic/angular/directives/navigation/stack-utils';
 
 @Component({
   selector: 'app-task-detail',
   templateUrl: './task-detail.page.html',
   styleUrls: ['./task-detail.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule]
+  imports: [IonicModule, CommonModule, FormsModule],
+  providers: [UserStoreServiceService, Storage],
 })
 export class TaskDetailPage implements OnInit {
   startTime: number | undefined;
@@ -17,34 +22,36 @@ export class TaskDetailPage implements OnInit {
   startLocation: string | undefined;
   endLocation: string | undefined;
   data: any;
-  taskData: any=[];
+  taskData: any = [];
+  allData: any[] = [];
+  showTask: any;
+  showSpecificTask = false;
 
-  constructor() { 
-    console.log("Constructior");
+  constructor(
+    private route: ActivatedRoute,
+    private storeService: UserStoreServiceService
+  ) {
+    console.log('Constructior');
   }
 
   ngOnInit() {
-    console.log("NGONINT")
-    this.getTaskData();
+    console.log('NGONINT');
+
+    const taskData = history.state.taskData;
+    const pageData = history.state.pageData;
+    this.getTaskData(pageData, taskData);
   }
 
-  getTaskData(){
-    this.taskData.startTime = 0;
-    this.taskData.endTime = 10;
-    this.taskData.elapsedTime = 10;
-    this.taskData.startLocation = "77.25,78.66";
-    this.taskData.endLocation ="77.27,78.67";
-
-    this.taskData.push({
-      startTime: this.taskData.startTime,
-      endTime: this.taskData.endTime,
-      elapsedTime: this.taskData.elapsedTime,
-      startLocation: this.taskData.startLocation,
-      endLocation: this.taskData.endLocation
+  getTaskData(pageData: any, taskData: any) {
+    this.storeService.getAllData().then((data) => {
+      // console.log(data);
+      this.allData = data;
     });
-    
+    if (pageData == true) {
+      console.log('TRUE PAGE DATA');
+    } else {
+      this.showTask = taskData.name;
+      this.showSpecificTask = true;
+    }
   }
-
-
-
 }
