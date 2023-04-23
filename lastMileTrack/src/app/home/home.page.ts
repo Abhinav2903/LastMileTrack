@@ -6,13 +6,14 @@ import { CommonModule } from '@angular/common';
 import { taskListRecord } from '../constants/taskList.enum';
 import { UserStoreServiceService } from '../service/user-store-service.service';
 import { Storage } from '@ionic/storage-angular';
+import {  NavigationExtras, Router } from '@angular/router';
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
   standalone: true,
   imports: [CommonModule, IonicModule, FormsModule],
-  providers: [UserStoreServiceService,Storage] 
+  providers: [UserStoreServiceService, Storage],
 })
 export class HomePage {
   showTaskForm: boolean | undefined;
@@ -43,17 +44,9 @@ export class HomePage {
 
   constructor(
     private toastController: ToastController,
-    private navCtrl: NavController,
-    private storeService:UserStoreServiceService,
-  ) {
-  }
-
-  // onStop(event: Event, task: any) {
-  //   this.stopTimer(task,event,  'Timer Stopped!');
-
-  //   // this.previousTaskAssign(task, event);
-  //   // this.showToast('Timer Stopped!');
-  // }
+    private storeService: UserStoreServiceService,
+    private router: Router
+  ) {}
 
   onPause(event: Event, task: any) {
     this.stopTimer(task, event, 'Timer Paused!');
@@ -86,7 +79,7 @@ export class HomePage {
 
   // function on complete button stops the timer after task completion
   onComplete(event: Event, task: any) {
-    this.stopTimer( task,event, 'Task is Completed!',true);
+    this.stopTimer(task, event, 'Task is Completed!', true);
     // this.previousTaskAssign(task, event);
     // this.showToast('Task is Completed!');
     // save the time in the storage
@@ -116,8 +109,18 @@ export class HomePage {
   }
 
   //routing to the list page
-  redirectToListData() {
-    this.navCtrl.navigateForward('/task-detail');
+  redirectToListData(completeData?: boolean,task?:any) {
+    // Pass data to the TaskDetailPage
+    console.log(completeData,task)
+    const navigationExtras: NavigationExtras = {
+      state: {
+        taskData: task,
+        pageData:completeData
+      }
+    };
+
+    this.router.navigate(['/task-detail'],navigationExtras);
+    // this.navCtrl.navigateForward('/task-detail', navigationExtras);
   }
 
   //start the timer according to the pausedtime or from start
@@ -141,18 +144,17 @@ export class HomePage {
     event: Event,
     pausedTime: number = 0
   ) {
-    
     console.log('task' + task.name);
     console.log(task.name == this.prevTask);
-    if (typeof this.prevTask === 'undefined'||this.prevTask == 'newTask') {
+    if (typeof this.prevTask === 'undefined' || this.prevTask == 'newTask') {
       this.prevTask = task;
       this.startTimer(task, event, pausedTime);
     } else {
       if (this.prevTask.name != task.name) {
         console.log('Prev Task' + this.prevTask.name);
-        console.log("Prev Task icon"+ this.prevTask.isShowIcon)
+        console.log('Prev Task icon' + this.prevTask.isShowIcon);
         // if(this.prevTask.isShowIcon != true){
-          // this.prevTask.isShowIcon = !this.prevTask.isShowIcon
+        // this.prevTask.isShowIcon = !this.prevTask.isShowIcon
         // }
         this.stopTimer(this.prevTask, event, 'New Task Started');
         this.prevTask = task;
@@ -171,20 +173,46 @@ export class HomePage {
   }
 
   // stop timer
-  stopTimer(task: any, event: Event, toast?: string,direct?:boolean) {
+  async stopTimer(task: any, event: Event, toast?: string, direct?: boolean) {
     console.log('TASK STOP', task);
-    console.log("Task icon",task.isShowIcon)
+    console.log('Task icon', task.isShowIcon);
     task.isShowIcon = !task.isShowIcon;
     event.stopPropagation();
     clearInterval(this.timerInterval);
     this.calculateElapsedTime();
+    const dateKey = this.createDateKey();
+
     if (toast) {
       this.showToast(toast);
     }
-    if(direct){
+    if (
+      direct ||
+      toast == 'Task is Completed!' ||
+      toast === 'New Task Started'
+    ) {
       this.prevTask = 'newTask';
-      this.storeService.setValue("1",task)
+      this.storeService.getValue(dateKey).then((val) => {
+        console.log('Key value retrived', val);
+        console.log(typeof val);
+        if (val != null) {
+          val.push(task);
+          this.storeService.setValue(dateKey, val);
+        } else {
+          this.storeService.setValue(dateKey, [task]);
+        }
+      });
     }
+  }
+
+  createDateKey() {
+    const currentDate = new Date();
+    return currentDate
+      .toLocaleDateString('en-US', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+      })
+      .replace(/ /g, '');
   }
 
   resetTimer() {

@@ -15,11 +15,20 @@ export class UserStoreServiceService {
       name: 'LMT_DB',
       driverOrder: ['indexeddb', 'sqlite', 'websql']
     };
-    await this.storageVar.set(key,[value])
+    await this.storageVar.set(key,value)
   }
 
   async getValue(key: string){
     return await this.storageVar.get(key)
+  }
+
+  async getAllData(): Promise<any[]> {
+    const keys = await this.storageVar.keys();
+    const promises = keys.map(async (key) => {
+      const value = await this.storageVar.get(key);
+      return { key, value };
+    });
+    return await Promise.all(promises);
   }
 }
 
