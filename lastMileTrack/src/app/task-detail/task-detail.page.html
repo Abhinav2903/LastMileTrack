@@ -17,6 +17,14 @@
           <ion-item>
             <ion-label>Total time: {{ task.timer }}</ion-label>
           </ion-item>
+          <ion-item>
+            <ion-label
+              >Start Cord: {{ task.startLat }}:{{task.startLon}}</ion-label
+            >
+          </ion-item>
+          <ion-item>
+            <ion-label>End Cord: {{ task.endLat}}:{{task.endLon}}</ion-label>
+          </ion-item>
         </ion-item-sliding>
       </ion-list>
       <ion-list *ngIf="showSpecificTask == true">
@@ -25,6 +33,14 @@
             <ion-label> {{ task.name }} </ion-label>
             <ion-item>
               <ion-label>Total time: {{ task.timer }}</ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-label
+                >Start Cord:{{ task.startLat }}:{{task.startLon}}</ion-label
+              >
+            </ion-item>
+            <ion-item>
+              <ion-label>End Cord: {{ task.endLat}}:{{task.endLon}}</ion-label>
             </ion-item>
           </div>
         </ion-item-sliding>

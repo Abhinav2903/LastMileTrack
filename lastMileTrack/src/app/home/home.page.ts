@@ -6,7 +6,8 @@ import { CommonModule } from '@angular/common';
 import { taskListRecord } from '../constants/taskList.enum';
 import { UserStoreServiceService } from '../service/user-store-service.service';
 import { Storage } from '@ionic/storage-angular';
-import {  NavigationExtras, Router } from '@angular/router';
+import { NavigationExtras, Router } from '@angular/router';
+import { LocationtrackerService } from '../service/locationtracker.service';
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
@@ -45,7 +46,8 @@ export class HomePage {
   constructor(
     private toastController: ToastController,
     private storeService: UserStoreServiceService,
-    private router: Router
+    private router: Router,
+    private locationService: LocationtrackerService
   ) {}
 
   onPause(event: Event, task: any) {
@@ -109,18 +111,17 @@ export class HomePage {
   }
 
   //routing to the list page
-  redirectToListData(completeData?: boolean,task?:any) {
+  redirectToListData(completeData?: boolean, task?: any) {
     // Pass data to the TaskDetailPage
-    console.log(completeData,task)
+    console.log(completeData, task);
     const navigationExtras: NavigationExtras = {
       state: {
         taskData: task,
-        pageData:completeData
-      }
+        pageData: completeData,
+      },
     };
 
-    this.router.navigate(['/task-detail'],navigationExtras);
-    // this.navCtrl.navigateForward('/task-detail', navigationExtras);
+    this.router.navigate(['/task-detail'], navigationExtras);
   }
 
   //start the timer according to the pausedtime or from start
@@ -136,8 +137,9 @@ export class HomePage {
     // this.previousTaskAssign(task,event);
   }
 
-  previousTaskAssign(
+  async previousTaskAssign(
     task: {
+      startLocation: any;
       isShowIcon: boolean;
       name: string;
     },
@@ -146,10 +148,14 @@ export class HomePage {
   ) {
     console.log('task' + task.name);
     console.log(task.name == this.prevTask);
+    // if previously there is no task then start new task
     if (typeof this.prevTask === 'undefined' || this.prevTask == 'newTask') {
       this.prevTask = task;
       this.startTimer(task, event, pausedTime);
+      const location = await this.getCurrentLocation();
+      this.assignStartLocation(task, location);
     } else {
+      // check the previous task name if not same then strat new time for that task
       if (this.prevTask.name != task.name) {
         console.log('Prev Task' + this.prevTask.name);
         console.log('Prev Task icon' + this.prevTask.isShowIcon);
@@ -159,6 +165,8 @@ export class HomePage {
         this.stopTimer(this.prevTask, event, 'New Task Started');
         this.prevTask = task;
         this.startTimer(task, event, pausedTime);
+        const location = await this.getCurrentLocation();
+        this.assignStartLocation(task, location);
       } else {
         this.prevTask = task;
         this.startTimer(task, event, pausedTime);
@@ -191,6 +199,9 @@ export class HomePage {
       toast === 'New Task Started'
     ) {
       this.prevTask = 'newTask';
+      // this.calculateEndLocation(task)
+      const location = await this.getCurrentLocation();
+      this.assignEndLocation(task, location);
       this.storeService.getValue(dateKey).then((val) => {
         console.log('Key value retrived', val);
         console.log(typeof val);
@@ -220,9 +231,25 @@ export class HomePage {
     this.elapsedTime = 0;
   }
 
-  //use gps
-  calculateStartLocation() {}
+  assignStartLocation(task: any, location: any) {
+    task.startLat = location.latitude;
+    task.startLon = location.longitude;
+  }
 
-  // use gps
-  calculateEndLocation() {}
+  assignEndLocation(task: any, location: any) {
+    task.endLat = location.latitude;
+    task.endLon = location.longitude;
+  }
+
+  async getCurrentLocation() {
+    const locationCord = await this.locationService.checkPermission();
+    if (locationCord == 0) {
+      this.showToast(
+        'Location Service Not available,please update the permisions'
+      );
+      return null;
+    } else {
+      return locationCord;
+    }
+  }
 }
