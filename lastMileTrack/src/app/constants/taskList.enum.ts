@@ -2,6 +2,10 @@ export interface Task {
   name: string;
   isShowIcon: boolean;
   timer: number;
+  startLat:number;
+  startLon:number;
+  endLat:number;
+  endLon:number;
 }
 
 export enum TaskList {
@@ -20,16 +24,17 @@ export enum TaskList {
 }
 
 export const taskListRecord: Record<TaskList, Task> = {
-  [TaskList.Task1]: { name: 'Task 1', isShowIcon: true, timer: 0 },
-  [TaskList.Task2]: { name: 'Task 2', isShowIcon: true, timer: 0 },
-  [TaskList.Task3]: { name: 'Task 3', isShowIcon: true, timer: 0 },
-  [TaskList.Task4]: { name: 'Task 4', isShowIcon: true, timer: 0 },
-  [TaskList.Task5]: { name: 'Task 5', isShowIcon: true, timer: 0 },
-  [TaskList.Task6]: { name: 'Task 6', isShowIcon: true, timer: 0 },
-  [TaskList.Task7]: { name: 'Task 7', isShowIcon: true, timer: 0 },
-  [TaskList.Task8]: { name: 'Task 8', isShowIcon: true, timer: 0 },
-  [TaskList.Task9]: { name: 'Task 9', isShowIcon: true, timer: 0 },
-  [TaskList.Task10]: { name: 'Task 10', isShowIcon: true, timer: 0 },
-  [TaskList.Task11]: { name: 'Task 11', isShowIcon: true, timer: 0 },
-  [TaskList.Task12]: { name: 'Task 12', isShowIcon: true, timer: 0 },
+  [TaskList.Task1]: { name: 'Task 1', isShowIcon: true, timer: 0 ,startLat:0,startLon:0,endLat:0,endLon:0},
+  [TaskList.Task2]: { name: 'Task 2', isShowIcon: true, timer: 0, startLat:0,startLon:0,endLat:0,endLon:0 },
+  [TaskList.Task3]: { name: 'Task 3', isShowIcon: true, timer: 0, startLat:0,startLon:0,endLat:0,endLon:0 },
+  [TaskList.Task4]: { name: 'Task 4', isShowIcon: true, timer: 0, startLat:0,startLon:0,endLat:0,endLon:0 },
+  [TaskList.Task5]: { name: 'Task 5', isShowIcon: true, timer: 0, startLat:0,startLon:0,endLat:0,endLon:0 },
+  [TaskList.Task6]: { name: 'Task 6', isShowIcon: true, timer: 0, startLat:0,startLon:0,endLat:0,endLon:0 },
+  [TaskList.Task7]: { name: 'Task 7', isShowIcon: true, timer: 0, startLat:0,startLon:0,endLat:0,endLon:0 },
+  [TaskList.Task8]: { name: 'Task 8', isShowIcon: true, timer: 0, startLat:0,startLon:0,endLat:0,endLon:0 },
+  [TaskList.Task9]: { name: 'Task 9', isShowIcon: true, timer: 0, startLat:0,startLon:0,endLat:0,endLon:0 },
+  [TaskList.Task10]: { name: 'Task 10', isShowIcon: true, timer: 0, startLat:0,startLon:0,endLat:0,endLon:0 },
+  [TaskList.Task11]: { name: 'Task 11', isShowIcon: true, timer: 0, startLat:0,startLon:0,endLat:0,endLon:0 },
+  [TaskList.Task12]: { name: 'Task 12', isShowIcon: true, timer: 0, startLat:0,startLon:0,endLat:0,endLon:0 },
 };
+
