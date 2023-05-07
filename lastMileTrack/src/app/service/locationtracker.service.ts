@@ -25,6 +25,8 @@ export class LocationtrackerService {
           break;
         case 'prompt':
         case 'prompt-with-rationale':
+          await Geolocation.requestPermissions();
+          return this.userLocation();
         case 'granted':
           return this.userLocation();
       }
