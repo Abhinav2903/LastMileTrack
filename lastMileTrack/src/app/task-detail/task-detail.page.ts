@@ -6,14 +6,14 @@ import { ActivatedRoute } from '@angular/router';
 import { UserStoreServiceService } from '../service/user-store-service.service';
 import { Storage } from '@ionic/storage-angular';
 import { computeStackId } from '@ionic/angular/directives/navigation/stack-utils';
-
+import { File } from '@ionic-native/file/ngx';
 @Component({
   selector: 'app-task-detail',
   templateUrl: './task-detail.page.html',
   styleUrls: ['./task-detail.page.scss'],
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule],
-  providers: [UserStoreServiceService, Storage],
+  providers: [UserStoreServiceService, Storage,File],
 })
 export class TaskDetailPage implements OnInit {
   startTime: number | undefined;
