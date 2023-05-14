@@ -8,13 +8,14 @@ import { UserStoreServiceService } from '../service/user-store-service.service';
 import { Storage } from '@ionic/storage-angular';
 import { NavigationExtras, Router } from '@angular/router';
 import { LocationtrackerService } from '../service/locationtracker.service';
+import { File } from '@ionic-native/file/ngx';
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
   standalone: true,
   imports: [CommonModule, IonicModule, FormsModule],
-  providers: [UserStoreServiceService, Storage],
+  providers: [UserStoreServiceService, Storage,File],
 })
 export class HomePage {
   showTaskForm: boolean | undefined;
@@ -247,9 +248,14 @@ export class HomePage {
       this.showToast(
         'Location Service Not available,please update the permisions'
       );
-      return null;
+      return 0.0;
     } else {
       return locationCord;
     }
+  }
+
+  exportToCSV(){
+    //call export to csv function
+    this.storeService.exportToCSV();
   }
 }
