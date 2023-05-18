@@ -39,6 +39,7 @@ export class HomePage {
 
   @ViewChild('myForm', { static: false })
   myForm!: ElementRef<HTMLFormElement>;
+  onPauseCheck: boolean | undefined;
 
   submitForm() {
     this.myForm.nativeElement.submit();
@@ -53,12 +54,14 @@ export class HomePage {
 
   onPause(event: Event, task: any) {
     this.stopTimer(task, event, 'Timer Paused!');
-
+    this.onPauseCheck = true;
     // Store the paused task and its pausedTime value
     const pausedTask = this.pausedTasks.find((t) => t.task === task);
     if (pausedTask) {
+      //console.log("in if");
       pausedTask.pausedTime = this.elapsedTime;
     } else {
+      //console.log("in else");
       this.pausedTasks.push({ task, pausedTime: this.elapsedTime });
     }
   }
@@ -67,13 +70,13 @@ export class HomePage {
   onResume(event: Event, task: any) {
     this.showToast('Timer Resumed!');
     // task.isShowIcon = !task.isShowIcon;
-    console.log('elapsed Time', this.elapsedTime);
+    //console.log('elapsed Time', this.elapsedTime);
 
     // Retrieve the pausedTime value for the resumed task
     const pausedTask = this.pausedTasks.find((t) => t.task === task);
     const pausedTime = pausedTask ? pausedTask.pausedTime : 0;
-
-    console.log('Paused Time', pausedTime);
+    //console.log("paused task",pausedTask)
+    //console.log('Paused Time', pausedTime);
     // this.startTimer(task, event,pausedTime);
     // still remaining the code for if a new task timer is clicked stop the previous timer save it and start new
     this.previousTaskAssign(task, event, pausedTime);
@@ -114,7 +117,7 @@ export class HomePage {
   //routing to the list page
   redirectToListData(completeData?: boolean, task?: any) {
     // Pass data to the TaskDetailPage
-    console.log(completeData, task);
+    //console.log(completeData, task);
     const navigationExtras: NavigationExtras = {
       state: {
         taskData: task,
@@ -147,10 +150,10 @@ export class HomePage {
     event: Event,
     pausedTime: number = 0
   ) {
-    console.log('task' + task.name);
-    console.log(task.name == this.prevTask);
+    //console.log('task' + task.name);
+    //console.log('check prev task',task.name === this.prevTask);
     // if previously there is no task then start new task
-    if (typeof this.prevTask === 'undefined' || this.prevTask == 'newTask') {
+    if (typeof this.prevTask === 'undefined' || this.prevTask === 'newTask') {
       this.prevTask = task;
       this.startTimer(task, event, pausedTime);
       const location = await this.getCurrentLocation();
@@ -158,8 +161,8 @@ export class HomePage {
     } else {
       // check the previous task name if not same then strat new time for that task
       if (this.prevTask.name != task.name) {
-        console.log('Prev Task' + this.prevTask.name);
-        console.log('Prev Task icon' + this.prevTask.isShowIcon);
+        //console.log('Prev Task' + this.prevTask.name);
+        //console.log('Prev Task icon' + this.prevTask.isShowIcon);
         // if(this.prevTask.isShowIcon != true){
         // this.prevTask.isShowIcon = !this.prevTask.isShowIcon
         // }
@@ -178,14 +181,18 @@ export class HomePage {
   calculateElapsedTime() {
     const endTime = new Date();
     this.elapsedTime = Math.round((endTime.getTime() - this.startTime) / 1000);
-    console.log(this.elapsedTime);
+    //console.log(this.elapsedTime);
   }
 
   // stop timer
   async stopTimer(task: any, event: Event, toast?: string, direct?: boolean) {
-    console.log('TASK STOP', task);
-    console.log('Task icon', task.isShowIcon);
-    task.isShowIcon = !task.isShowIcon;
+    //console.log('TASK STOP', task);
+    //console.log('Task icon', task.isShowIcon);
+    if(toast === "New Task Started" && this.onPauseCheck == true){
+      task.isShowIcon = task.isShowIcon;
+    }else{
+      task.isShowIcon = !task.isShowIcon;
+    }
     event.stopPropagation();
     clearInterval(this.timerInterval);
     this.calculateElapsedTime();
@@ -204,8 +211,8 @@ export class HomePage {
       const location = await this.getCurrentLocation();
       this.assignEndLocation(task, location);
       this.storeService.getValue(dateKey).then((val) => {
-        console.log('Key value retrived', val);
-        console.log(typeof val);
+        //console.log('Key value retrived', val);
+        //console.log(typeof val);
         if (val != null) {
           val.push(task);
           this.storeService.setValue(dateKey, val);
