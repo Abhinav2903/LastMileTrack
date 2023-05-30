@@ -3,12 +3,13 @@ import { IonicModule, NavController } from '@ionic/angular';
 import { ToastController } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { taskListRecord } from '../constants/taskList.enum';
+import { GroupId, taskListRecord } from '../constants/taskList.enum';
 import { UserStoreServiceService } from '../service/user-store-service.service';
 import { Storage } from '@ionic/storage-angular';
 import { NavigationExtras, Router } from '@angular/router';
 import { LocationtrackerService } from '../service/locationtracker.service';
 import { File } from '@ionic-native/file/ngx';
+import { Task } from '../constants/taskInterface';
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
@@ -16,6 +17,7 @@ import { File } from '@ionic-native/file/ngx';
   standalone: true,
   imports: [CommonModule, IonicModule, FormsModule],
   providers: [UserStoreServiceService, Storage,File],
+  
 })
 export class HomePage {
   showTaskForm: boolean | undefined;
@@ -24,7 +26,7 @@ export class HomePage {
   tasks: any[] = [];
   isVisible = false;
   isStopVisible = true;
-  taskListRecord = Object.values(taskListRecord);
+  taskRecord = Object.values(taskListRecord);
   // orderedTaskList = Object.values(taskListRecord).sort((a, b) => a.name.localeCompare(b.name));
   endTime!: Date;
   elapsedTime!: number;
@@ -32,13 +34,19 @@ export class HomePage {
   pausedTime!: number;
   pausedTasks: any[] = [];
   prevTask: any;
-
+  selectedGroupId: GroupId = GroupId.Group1;
+  GroupId: any;
   // storageVariable
   daytaskCounter = 0; // can be incremented regularly by stroing in the storage
   newDay: string | undefined; // can be ommited
 
+  // taskListRecord: any[] = []; // Your task list array
+
+  groupedTasks: { groupID: string, tasks: any[] }[] = [];
+
   @ViewChild('myForm', { static: false })
   myForm!: ElementRef<HTMLFormElement>;
+  onPauseCheck: boolean | undefined;
 
   submitForm() {
     this.myForm.nativeElement.submit();
@@ -49,16 +57,38 @@ export class HomePage {
     private storeService: UserStoreServiceService,
     private router: Router,
     private locationService: LocationtrackerService
-  ) {}
+  ) { this.groupTasksByGroupID();}
+
+
+  groupTasksByGroupID() {
+    const groups = new Map<string, any[]>();
+  
+    for (const task of this.taskRecord) {
+      const groupID = task.groupId;
+      const groupTasks = groups.get(groupID);
+      if (groupTasks) {
+        groupTasks.push(task);
+      } else {
+        groups.set(groupID, [task]);
+      }
+    }
+  
+    this.groupedTasks = Array.from(groups).map(([groupID, tasks]) => ({
+      groupID,
+      tasks,
+    }));
+  }
 
   onPause(event: Event, task: any) {
     this.stopTimer(task, event, 'Timer Paused!');
-
+    this.onPauseCheck = true;
     // Store the paused task and its pausedTime value
     const pausedTask = this.pausedTasks.find((t) => t.task === task);
     if (pausedTask) {
+      //console.log("in if");
       pausedTask.pausedTime = this.elapsedTime;
     } else {
+      //console.log("in else");
       this.pausedTasks.push({ task, pausedTime: this.elapsedTime });
     }
   }
@@ -67,13 +97,13 @@ export class HomePage {
   onResume(event: Event, task: any) {
     this.showToast('Timer Resumed!');
     // task.isShowIcon = !task.isShowIcon;
-    console.log('elapsed Time', this.elapsedTime);
+    //console.log('elapsed Time', this.elapsedTime);
 
     // Retrieve the pausedTime value for the resumed task
     const pausedTask = this.pausedTasks.find((t) => t.task === task);
     const pausedTime = pausedTask ? pausedTask.pausedTime : 0;
-
-    console.log('Paused Time', pausedTime);
+    //console.log("paused task",pausedTask)
+    //console.log('Paused Time', pausedTime);
     // this.startTimer(task, event,pausedTime);
     // still remaining the code for if a new task timer is clicked stop the previous timer save it and start new
     this.previousTaskAssign(task, event, pausedTime);
@@ -114,7 +144,7 @@ export class HomePage {
   //routing to the list page
   redirectToListData(completeData?: boolean, task?: any) {
     // Pass data to the TaskDetailPage
-    console.log(completeData, task);
+    //console.log(completeData, task);
     const navigationExtras: NavigationExtras = {
       state: {
         taskData: task,
@@ -147,10 +177,10 @@ export class HomePage {
     event: Event,
     pausedTime: number = 0
   ) {
-    console.log('task' + task.name);
-    console.log(task.name == this.prevTask);
+    //console.log('task' + task.name);
+    //console.log('check prev task',task.name === this.prevTask);
     // if previously there is no task then start new task
-    if (typeof this.prevTask === 'undefined' || this.prevTask == 'newTask') {
+    if (typeof this.prevTask === 'undefined' || this.prevTask === 'newTask') {
       this.prevTask = task;
       this.startTimer(task, event, pausedTime);
       const location = await this.getCurrentLocation();
@@ -158,8 +188,8 @@ export class HomePage {
     } else {
       // check the previous task name if not same then strat new time for that task
       if (this.prevTask.name != task.name) {
-        console.log('Prev Task' + this.prevTask.name);
-        console.log('Prev Task icon' + this.prevTask.isShowIcon);
+        //console.log('Prev Task' + this.prevTask.name);
+        //console.log('Prev Task icon' + this.prevTask.isShowIcon);
         // if(this.prevTask.isShowIcon != true){
         // this.prevTask.isShowIcon = !this.prevTask.isShowIcon
         // }
@@ -178,14 +208,18 @@ export class HomePage {
   calculateElapsedTime() {
     const endTime = new Date();
     this.elapsedTime = Math.round((endTime.getTime() - this.startTime) / 1000);
-    console.log(this.elapsedTime);
+    //console.log(this.elapsedTime);
   }
 
   // stop timer
   async stopTimer(task: any, event: Event, toast?: string, direct?: boolean) {
-    console.log('TASK STOP', task);
-    console.log('Task icon', task.isShowIcon);
-    task.isShowIcon = !task.isShowIcon;
+    //console.log('TASK STOP', task);
+    //console.log('Task icon', task.isShowIcon);
+    if(toast === "New Task Started" && this.onPauseCheck == true){
+      task.isShowIcon = task.isShowIcon;
+    }else{
+      task.isShowIcon = !task.isShowIcon;
+    }
     event.stopPropagation();
     clearInterval(this.timerInterval);
     this.calculateElapsedTime();
@@ -204,8 +238,8 @@ export class HomePage {
       const location = await this.getCurrentLocation();
       this.assignEndLocation(task, location);
       this.storeService.getValue(dateKey).then((val) => {
-        console.log('Key value retrived', val);
-        console.log(typeof val);
+        //console.log('Key value retrived', val);
+        //console.log(typeof val);
         if (val != null) {
           val.push(task);
           this.storeService.setValue(dateKey, val);
@@ -257,5 +291,10 @@ export class HomePage {
   exportToCSV(){
     //call export to csv function
     this.storeService.exportToCSV();
+  }
+
+  getFilteredTasksByGroup(selectedGroupId: GroupId): Task[] {
+    return Object.values(taskListRecord)
+    .filter((task) => task.groupId === selectedGroupId);
   }
 }

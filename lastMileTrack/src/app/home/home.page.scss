@@ -80,3 +80,45 @@ ion-icon.green-tick {
   --background: transparent;
   color: white;
 }
+
+
+.card-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+}
+
+.card-item ion-button {
+  margin-left: 8px;
+}
+
+.card-item .serial-number {
+  margin-right: 8px;
+  font-weight: bold;
+}
+
+
+// .timer {
+//   display: flex;
+//   align-items: center;
+//   margin-left: 8px;
+// }
+
+// .clock-icon {
+//   animation: rotate 1s linear infinite;
+// }
+
+// @keyframes rotate {
+//   0% {
+//     transform: rotate(0deg);
+//   }
+//   100% {
+//     transform: rotate(360deg);
+//   }
+// }
+
+// .clock-icon.finished {
+//   color: green;
+//   animation: none;
+// }
