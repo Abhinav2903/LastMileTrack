@@ -9,7 +9,7 @@ export class LocationtrackerService {
   permissionStatus: any;
   position: any;
 
-  constructor(toastController: ToastController) {}
+  constructor(private toastController: ToastController) {}
 
   async checkPermission() {
     try {
@@ -37,7 +37,28 @@ export class LocationtrackerService {
   }
 
   async userLocation() {
-    this.position = (await Geolocation.getCurrentPosition()).coords;
-    return this.position;
+    try {
+      this.position = (await Geolocation.getCurrentPosition()).coords;
+      return this.position;
+    } catch (err) {
+      console.log(err);
+      const toast = await this.toastController.create({
+        message: 'Please enable GPS for accurate location detection.',
+        duration: 3000,
+        position: 'bottom',
+        buttons: [
+          {
+            text: 'Settings',
+            handler: () => {
+              // Open device settings to enable GPS
+              // You may need to use a plugin or a platform-specific code for this
+              // Example: this.openDeviceSettings();
+            },
+          },
+        ],
+      });
+      toast.present();
+      return this.position;
+    }
   }
 }

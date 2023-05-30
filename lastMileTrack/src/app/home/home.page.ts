@@ -3,12 +3,13 @@ import { IonicModule, NavController } from '@ionic/angular';
 import { ToastController } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { taskListRecord } from '../constants/taskList.enum';
+import { GroupId, taskListRecord } from '../constants/taskList.enum';
 import { UserStoreServiceService } from '../service/user-store-service.service';
 import { Storage } from '@ionic/storage-angular';
 import { NavigationExtras, Router } from '@angular/router';
 import { LocationtrackerService } from '../service/locationtracker.service';
 import { File } from '@ionic-native/file/ngx';
+import { Task } from '../constants/taskInterface';
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
@@ -16,6 +17,7 @@ import { File } from '@ionic-native/file/ngx';
   standalone: true,
   imports: [CommonModule, IonicModule, FormsModule],
   providers: [UserStoreServiceService, Storage,File],
+  
 })
 export class HomePage {
   showTaskForm: boolean | undefined;
@@ -24,7 +26,7 @@ export class HomePage {
   tasks: any[] = [];
   isVisible = false;
   isStopVisible = true;
-  taskListRecord = Object.values(taskListRecord);
+  taskRecord = Object.values(taskListRecord);
   // orderedTaskList = Object.values(taskListRecord).sort((a, b) => a.name.localeCompare(b.name));
   endTime!: Date;
   elapsedTime!: number;
@@ -32,10 +34,15 @@ export class HomePage {
   pausedTime!: number;
   pausedTasks: any[] = [];
   prevTask: any;
-
+  selectedGroupId: GroupId = GroupId.Group1;
+  GroupId: any;
   // storageVariable
   daytaskCounter = 0; // can be incremented regularly by stroing in the storage
   newDay: string | undefined; // can be ommited
+
+  // taskListRecord: any[] = []; // Your task list array
+
+  groupedTasks: { groupID: string, tasks: any[] }[] = [];
 
   @ViewChild('myForm', { static: false })
   myForm!: ElementRef<HTMLFormElement>;
@@ -50,7 +57,27 @@ export class HomePage {
     private storeService: UserStoreServiceService,
     private router: Router,
     private locationService: LocationtrackerService
-  ) {}
+  ) { this.groupTasksByGroupID();}
+
+
+  groupTasksByGroupID() {
+    const groups = new Map<string, any[]>();
+  
+    for (const task of this.taskRecord) {
+      const groupID = task.groupId;
+      const groupTasks = groups.get(groupID);
+      if (groupTasks) {
+        groupTasks.push(task);
+      } else {
+        groups.set(groupID, [task]);
+      }
+    }
+  
+    this.groupedTasks = Array.from(groups).map(([groupID, tasks]) => ({
+      groupID,
+      tasks,
+    }));
+  }
 
   onPause(event: Event, task: any) {
     this.stopTimer(task, event, 'Timer Paused!');
@@ -264,5 +291,10 @@ export class HomePage {
   exportToCSV(){
     //call export to csv function
     this.storeService.exportToCSV();
+  }
+
+  getFilteredTasksByGroup(selectedGroupId: GroupId): Task[] {
+    return Object.values(taskListRecord)
+    .filter((task) => task.groupId === selectedGroupId);
   }
 }
