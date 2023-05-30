@@ -122,3 +122,16 @@ ion-icon.green-tick {
 //   color: green;
 //   animation: none;
 // }
+
+.group-boundary {
+  border-left: 5px solid; /* Adjust border properties as needed */
+  margin-left: 0; /* Remove or adjust margin as needed */
+  padding-left: 10px; /* Add padding to create space between the border and content */
+}
+
+.group-boundary-color {
+  /* Define the group boundary color property */
+  border-left-width: 5px;
+  border-left-style: solid;
+}
+
