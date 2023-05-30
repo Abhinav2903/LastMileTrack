@@ -18,8 +18,8 @@
 <ion-content [fullscreen]="true">
 
 <ion-content [fullscreen]="true">
-  <ng-container *ngFor="let group of groupedTasks">
-    <ion-card>
+  <ng-container *ngFor="let group of groupedTasks;let i = index">
+    <ion-card [class.group-boundary]="true" [style]="getGroupBoundaryStyle(i)">
       <ion-card-header>
         <ion-card-title>{{ group.groupID }}</ion-card-title>
       </ion-card-header>

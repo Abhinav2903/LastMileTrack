@@ -297,4 +297,14 @@ export class HomePage {
     return Object.values(taskListRecord)
     .filter((task) => task.groupId === selectedGroupId);
   }
+
+  getGroupBoundaryStyle(index: number) {
+    const color = this.groupBoundaryColors[index % this.groupBoundaryColors.length];
+    return {
+      'border-left-color': color
+    };
+  }
+  
+  groupBoundaryColors = ['blue', 'green', 'red', 'orange']; // Add more colors if needed
+  
 }
