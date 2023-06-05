@@ -25,22 +25,29 @@
       </ion-card-header>
       <ion-card-content>
         <ion-item *ngFor="let task of group.tasks" (click)="redirectToListData(false, task)">
-          <ion-label>{{ task.name }}</ion-label>
-          <!-- Show the timer if the task is in progress -->
-          <ion-label *ngIf="task.timer != 0">{{ task.timer }}</ion-label>
-          <ion-button fill="clear" *ngIf="task.isShowIcon" color="danger" (click)="onStart($event, task)">
-            <ion-icon name="play"></ion-icon>
-          </ion-button>
-          <ion-button fill="clear" *ngIf="!task.isShowIcon" color="success" (click)="onComplete($event, task)">
-            <ion-icon name="checkmark-circle" class="green-tick"></ion-icon>
-          </ion-button>
-          <ion-button fill="clear" *ngIf="!task.isShowIcon" color="danger" (click)="onPause($event, task)">
-            <ion-icon name="pause"></ion-icon>
-          </ion-button>
-          <ion-button fill="clear" *ngIf="task.isShowIcon" color="danger" (click)="onResume($event, task)">
-            <ion-icon name="refresh"></ion-icon>
-          </ion-button>
+          <div class="task-details">
+            <ion-label class="task-name">{{ task.name }}</ion-label>
+            <ion-label *ngIf="task.timer !== 0">{{ formatTime(task.timer) }}</ion-label>
+            <ng-container *ngIf="task.timer === 0">
+              <div class="timer-not-started">--:--</div>
+            </ng-container>
+            <div class="task-buttons">
+              <ion-button fill="clear" *ngIf="task.isShowIcon" color="danger" (click)="onStart($event, task)">
+                <ion-icon name="play"></ion-icon>
+              </ion-button>
+              <ion-button fill="clear" *ngIf="!task.isShowIcon" color="success" (click)="onComplete($event, task)">
+                <ion-icon name="checkmark-circle" class="green-tick"></ion-icon>
+              </ion-button>
+              <ion-button fill="clear" *ngIf="!task.isShowIcon" color="danger" (click)="onPause($event, task)">
+                <ion-icon name="pause"></ion-icon>
+              </ion-button>
+              <ion-button fill="clear" *ngIf="task.isShowIcon" color="danger" (click)="onResume($event, task)">
+                <ion-icon name="refresh"></ion-icon>
+              </ion-button>
+            </div>
+          </div>
         </ion-item>
+        
       </ion-card-content>
     </ion-card>
   </ng-container>

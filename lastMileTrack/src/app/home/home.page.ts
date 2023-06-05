@@ -16,8 +16,7 @@ import { Task } from '../constants/taskInterface';
   styleUrls: ['home.page.scss'],
   standalone: true,
   imports: [CommonModule, IonicModule, FormsModule],
-  providers: [UserStoreServiceService, Storage,File],
-  
+  providers: [UserStoreServiceService, Storage, File],
 })
 export class HomePage {
   showTaskForm: boolean | undefined;
@@ -42,7 +41,7 @@ export class HomePage {
 
   // taskListRecord: any[] = []; // Your task list array
 
-  groupedTasks: { groupID: string, tasks: any[] }[] = [];
+  groupedTasks: { groupID: string; tasks: any[] }[] = [];
 
   @ViewChild('myForm', { static: false })
   myForm!: ElementRef<HTMLFormElement>;
@@ -57,12 +56,13 @@ export class HomePage {
     private storeService: UserStoreServiceService,
     private router: Router,
     private locationService: LocationtrackerService
-  ) { this.groupTasksByGroupID();}
-
+  ) {
+    this.groupTasksByGroupID();
+  }
 
   groupTasksByGroupID() {
     const groups = new Map<string, any[]>();
-  
+
     for (const task of this.taskRecord) {
       const groupID = task.groupId;
       const groupTasks = groups.get(groupID);
@@ -72,7 +72,7 @@ export class HomePage {
         groups.set(groupID, [task]);
       }
     }
-  
+
     this.groupedTasks = Array.from(groups).map(([groupID, tasks]) => ({
       groupID,
       tasks,
@@ -215,9 +215,9 @@ export class HomePage {
   async stopTimer(task: any, event: Event, toast?: string, direct?: boolean) {
     //console.log('TASK STOP', task);
     //console.log('Task icon', task.isShowIcon);
-    if(toast === "New Task Started" && this.onPauseCheck == true){
+    if (toast === 'New Task Started' && this.onPauseCheck == true) {
       task.isShowIcon = task.isShowIcon;
-    }else{
+    } else {
       task.isShowIcon = !task.isShowIcon;
     }
     event.stopPropagation();
@@ -288,23 +288,38 @@ export class HomePage {
     }
   }
 
-  exportToCSV(){
+  exportToCSV() {
     //call export to csv function
     this.storeService.exportToCSV();
   }
 
   getFilteredTasksByGroup(selectedGroupId: GroupId): Task[] {
-    return Object.values(taskListRecord)
-    .filter((task) => task.groupId === selectedGroupId);
+    return Object.values(taskListRecord).filter(
+      (task) => task.groupId === selectedGroupId
+    );
   }
 
   getGroupBoundaryStyle(index: number) {
-    const color = this.groupBoundaryColors[index % this.groupBoundaryColors.length];
+    const color =
+      this.groupBoundaryColors[index % this.groupBoundaryColors.length];
     return {
-      'border-left-color': color
+      'border-left-color': color,
     };
   }
+
+  groupBoundaryColors = ['green', 'blue', 'red', 'orange']; // Add more colors if needed
+
+  formatTime(time: number): string {
+    // const hours = Math.floor(time / 3600);
+    const minutes = Math.floor((time % 3600) / 60);
+    const seconds = time % 60;
+    // ${this.padZero(hours)}:
   
-  groupBoundaryColors = ['blue', 'green', 'red', 'orange']; // Add more colors if needed
+    return `${this.padZero(minutes)}:${this.padZero(seconds)}`;
+  }
+  
+  private padZero(num: number): string {
+    return num.toString().padStart(2, '0');
+  }
   
 }
