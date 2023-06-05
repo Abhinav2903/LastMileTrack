@@ -134,4 +134,31 @@ ion-icon.green-tick {
   border-left-width: 5px;
   border-left-style: solid;
 }
+.task-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.task-name {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+// .task-buttons {
+//   display: flex;
+//   flex-wrap: wrap;
+//   margin-top: 5px;
+// }
+
+.task-buttons {
+  display: inline-flex;
+  margin-top: 5px;
+}
+
+.task-buttons ion-button {
+  padding: 0;
+  margin: 0;
+}
+
 

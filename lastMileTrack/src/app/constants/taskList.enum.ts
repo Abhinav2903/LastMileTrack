@@ -30,8 +30,8 @@ export enum TaskList {
   Task15 = 'Sendungen zurucklegen',
   Task16 = 'Auf Fahrzeug steigen',
 
-  Task17 = ':Sendung zustellen',
-  Task18 = ':Am Hauseingang warten',
+  // Task17 = ':Sendung zustellen',
+  // Task18 = ':Am Hauseingang warten',
 }
 
 export enum GroupId {
@@ -173,7 +173,7 @@ export const taskListRecord: Record<TaskList, Task> = {
     endLon: 0,
   },
   [TaskList.Task14]: {
-    groupId: GroupId.Group4,
+    groupId: GroupId.Group3,
     name: TaskList.Task14,
     isShowIcon: true,
     timer: 0,
@@ -183,7 +183,7 @@ export const taskListRecord: Record<TaskList, Task> = {
     endLon: 0,
   },
   [TaskList.Task15]: {
-    groupId: GroupId.Group3,
+    groupId: GroupId.Group4,
     name: TaskList.Task15,
     isShowIcon: true,
     timer: 0,
@@ -201,25 +201,5 @@ export const taskListRecord: Record<TaskList, Task> = {
     startLon: 0,
     endLat: 0,
     endLon: 0,
-  },
-  [TaskList.Task17]: {
-    groupId: GroupId.Group2,
-    name: TaskList.Task17,
-    isShowIcon: true,
-    timer: 0,
-    startLat: 0,
-    startLon: 0,
-    endLat: 0,
-    endLon: 0,
-  },
-  [TaskList.Task18]: {
-    groupId: GroupId.Group2,
-    name: TaskList.Task17,
-    isShowIcon: true,
-    timer: 0,
-    startLat: 0,
-    startLon: 0,
-    endLat: 0,
-    endLon: 0,
-  },
+  }
 };
