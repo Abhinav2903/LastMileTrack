@@ -30,31 +30,6 @@
   padding-bottom: 20px;
 }
 
-// .add-task-button{
-//   // width: 90% ;
-//   // background-color: #3a7be0;
-//   color: white;
-//   // // border: none;
-//   // border-radius: 5%;
-//   // box-shadow: none;
-//   // display: flex;
-//   // justify-content: center;
-//   // align-items: center;
-//   // margin-top: 10px;
-// }
-// .add-task-button  {
-//   border-radius: 0;
-//   width: 100%;
-//    // border-radius: 5%;
-//   background-color: #3a7be0;
-//   box-shadow: none;
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   margin-top: 10px;
-//   color: #3a7be0;
-
-// }
 
 .add-task-button  {
   width: 100%;
@@ -99,29 +74,6 @@ ion-icon.green-tick {
 }
 
 
-// .timer {
-//   display: flex;
-//   align-items: center;
-//   margin-left: 8px;
-// }
-
-// .clock-icon {
-//   animation: rotate 1s linear infinite;
-// }
-
-// @keyframes rotate {
-//   0% {
-//     transform: rotate(0deg);
-//   }
-//   100% {
-//     transform: rotate(360deg);
-//   }
-// }
-
-// .clock-icon.finished {
-//   color: green;
-//   animation: none;
-// }
 
 .group-boundary {
   border-left: 5px solid; /* Adjust border properties as needed */
@@ -136,20 +88,21 @@ ion-icon.green-tick {
 }
 .task-details {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: flex-start;
+  width: 100%;
+  // padding-inline-start: 0px;
+  // padding-inline-end: 0px;
 }
-
+.task-details ion-item {
+  flex-grow: 1;
+}
 .task-name {
   font-weight: bold;
   margin-bottom: 5px;
+  display: block
 }
 
-// .task-buttons {
-//   display: flex;
-//   flex-wrap: wrap;
-//   margin-top: 5px;
-// }
 
 .task-buttons {
   display: inline-flex;
@@ -161,4 +114,42 @@ ion-icon.green-tick {
   margin: 0;
 }
 
+.timer-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px; /* Adjust the height as per your requirement */
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background-color: #070707; 
+}
 
+.timer-square {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  // margin: 0 10px; /* Adjust the spacing between squares */
+}
+
+.timer-value {
+  width: 120px; /* Adjust the width as per your requirement */
+  height: 80px; /* Adjust the height as per your requirement */
+  border: 2px solid #ffffff; /* Adjust the border properties as per your preference */
+  border-radius: 10px; /* Adjust the border radius as per your preference */
+  font-size: 24px; /* Adjust the font size as per your preference */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.timer-label {
+  font-size: 14px; /* Adjust the font size as per your preference */
+  margin-top: 5px; /* Adjust the margin as per your preference */
+}
+.task-details-button{
+  // width: 220px;
+  // padding-inline-start: 0px;
+  // padding-inline-end: 0px;
+}
