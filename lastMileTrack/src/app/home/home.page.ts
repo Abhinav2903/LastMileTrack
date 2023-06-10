@@ -39,6 +39,7 @@ export class HomePage {
   daytaskCounter = 0; // can be incremented regularly by stroing in the storage
   newDay: string | undefined; // can be ommited
 
+  groupBoundaryColors = ['green', 'blue', 'red', 'orange']; // Add more colors if needed
   // taskListRecord: any[] = []; // Your task list array
 
   groupedTasks: { groupID: string; tasks: any[] }[] = [];
@@ -46,6 +47,8 @@ export class HomePage {
   @ViewChild('myForm', { static: false })
   myForm!: ElementRef<HTMLFormElement>;
   onPauseCheck: boolean | undefined;
+  singleTimer: any=0;
+  categoryColor: any;
 
   submitForm() {
     this.myForm.nativeElement.submit();
@@ -96,15 +99,9 @@ export class HomePage {
   // function call on the resume button call
   onResume(event: Event, task: any) {
     this.showToast('Timer Resumed!');
-    // task.isShowIcon = !task.isShowIcon;
-    //console.log('elapsed Time', this.elapsedTime);
-
     // Retrieve the pausedTime value for the resumed task
     const pausedTask = this.pausedTasks.find((t) => t.task === task);
     const pausedTime = pausedTask ? pausedTask.pausedTime : 0;
-    //console.log("paused task",pausedTask)
-    //console.log('Paused Time', pausedTime);
-    // this.startTimer(task, event,pausedTime);
     // still remaining the code for if a new task timer is clicked stop the previous timer save it and start new
     this.previousTaskAssign(task, event, pausedTime);
     event.stopPropagation();
@@ -113,8 +110,6 @@ export class HomePage {
   // function on complete button stops the timer after task completion
   onComplete(event: Event, task: any) {
     this.stopTimer(task, event, 'Task is Completed!', true);
-    // this.previousTaskAssign(task, event);
-    // this.showToast('Task is Completed!');
     // save the time in the storage
   }
 
@@ -134,17 +129,32 @@ export class HomePage {
 
   //function call on start button
   onStart(event: Event, task: any) {
-    // task.isShowIcon = !task.isShowIcon;
-    // this.startTimer(task,event);
     // still remaining the code for if a new task timer is clicked stop the previous timer save it and start new
     this.previousTaskAssign(task, event);
+    this.categoryColor = this.getCategoryColor(task.groupId); // Get the category color based on the groupId
+  // Rest of the code...
     event.stopPropagation();
   }
 
+  getCategoryColor(groupId: GroupId): string {
+    // You can implement your logic here to map the groupId to the corresponding category color
+    switch (groupId) {
+      case GroupId.Group1:
+        return this.groupBoundaryColors[0]; // Replace 'color1' with the actual color value for Group1
+      case GroupId.Group2:
+        return this.groupBoundaryColors[1]; // Replace 'color2' with the actual color value for Group2
+      // Add more cases for other groupIds and their corresponding color values
+      case GroupId.Group3:
+        return this.groupBoundaryColors[2]; 
+        case GroupId.Group4:
+          return this.groupBoundaryColors[3]; 
+      default:
+        return this.groupBoundaryColors[0]; // Replace 'defaultColor' with the default color value
+    }
+  }
   //routing to the list page
   redirectToListData(completeData?: boolean, task?: any) {
     // Pass data to the TaskDetailPage
-    //console.log(completeData, task);
     const navigationExtras: NavigationExtras = {
       state: {
         taskData: task,
@@ -162,10 +172,11 @@ export class HomePage {
     this.timerInterval = setInterval(() => {
       this.calculateElapsedTime();
       task.timer = this.elapsedTime;
+      this.singleTimer = task.timer;
     }, 1000);
 
+    
     // still remaining the code for if a new task timer is clicked stop the previous timer save it and start new
-    // this.previousTaskAssign(task,event);
   }
 
   async previousTaskAssign(
@@ -177,10 +188,9 @@ export class HomePage {
     event: Event,
     pausedTime: number = 0
   ) {
-    //console.log('task' + task.name);
-    //console.log('check prev task',task.name === this.prevTask);
     // if previously there is no task then start new task
     if (typeof this.prevTask === 'undefined' || this.prevTask === 'newTask') {
+      this.singleTimer = 0;
       this.prevTask = task;
       this.startTimer(task, event, pausedTime);
       const location = await this.getCurrentLocation();
@@ -188,11 +198,7 @@ export class HomePage {
     } else {
       // check the previous task name if not same then strat new time for that task
       if (this.prevTask.name != task.name) {
-        //console.log('Prev Task' + this.prevTask.name);
-        //console.log('Prev Task icon' + this.prevTask.isShowIcon);
-        // if(this.prevTask.isShowIcon != true){
-        // this.prevTask.isShowIcon = !this.prevTask.isShowIcon
-        // }
+        this.singleTimer = 0;
         this.stopTimer(this.prevTask, event, 'New Task Started');
         this.prevTask = task;
         this.startTimer(task, event, pausedTime);
@@ -208,13 +214,11 @@ export class HomePage {
   calculateElapsedTime() {
     const endTime = new Date();
     this.elapsedTime = Math.round((endTime.getTime() - this.startTime) / 1000);
-    //console.log(this.elapsedTime);
   }
 
   // stop timer
   async stopTimer(task: any, event: Event, toast?: string, direct?: boolean) {
-    //console.log('TASK STOP', task);
-    //console.log('Task icon', task.isShowIcon);
+
     if (toast === 'New Task Started' && this.onPauseCheck == true) {
       task.isShowIcon = task.isShowIcon;
     } else {
@@ -301,14 +305,12 @@ export class HomePage {
 
   getGroupBoundaryStyle(index: number) {
     const color =
-      this.groupBoundaryColors[index % this.groupBoundaryColors.length];
+      this.groupBoundaryColors[index % this.groupBoundaryColors.length];  
     return {
       'border-left-color': color,
+      'margin-top': '0px',
     };
   }
-
-  groupBoundaryColors = ['green', 'blue', 'red', 'orange']; // Add more colors if needed
-
   formatTime(time: number): string {
     // const hours = Math.floor(time / 3600);
     const minutes = Math.floor((time % 3600) / 60);
@@ -320,6 +322,14 @@ export class HomePage {
   
   private padZero(num: number): string {
     return num.toString().padStart(2, '0');
+  }
+
+  public toggleTimer(event: Event, task: any){
+    if(task.isShowIcon){
+      this.onStart(event,task);
+    }else{
+      this.onComplete(event,task);
+    }
   }
   
 }

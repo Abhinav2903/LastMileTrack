@@ -4,7 +4,7 @@
   </ion-toolbar>
 </ion-header> -->
 
-<ion-header >
+<ion-header>
   <ion-toolbar>
     <ion-title size="large">LMT</ion-title>
     <ion-buttons slot="end">
@@ -16,43 +16,41 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
+  <div class="timer-container">
+    <div class="timer-square">
+      <!-- <div class="timer-progress" [style.animation-duration.seconds]="singleTimer"></div> -->
+      <div class="timer-value" [style.border-color]="categoryColor">
+        <ng-container *ngIf="singleTimer !== 0"
+          >{{ formatTime(singleTimer) }}</ng-container
+        >
+        <ng-container *ngIf="singleTimer === 0">
+          <div class="timer-not-started">00:00</div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
 
-<ion-content [fullscreen]="true">
   <ng-container *ngFor="let group of groupedTasks;let i = index">
     <ion-card [class.group-boundary]="true" [style]="getGroupBoundaryStyle(i)">
       <ion-card-header>
         <ion-card-title>{{ group.groupID }}</ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <ion-item *ngFor="let task of group.tasks" (click)="redirectToListData(false, task)">
-          <div class="task-details">
-            <ion-label class="task-name">{{ task.name }}</ion-label>
-            <ion-label *ngIf="task.timer !== 0">{{ formatTime(task.timer) }}</ion-label>
-            <ng-container *ngIf="task.timer === 0">
-              <div class="timer-not-started">--:--</div>
-            </ng-container>
-            <div class="task-buttons">
-              <ion-button fill="clear" *ngIf="task.isShowIcon" color="danger" (click)="onStart($event, task)">
-                <ion-icon name="play"></ion-icon>
-              </ion-button>
-              <ion-button fill="clear" *ngIf="!task.isShowIcon" color="success" (click)="onComplete($event, task)">
-                <ion-icon name="checkmark-circle" class="green-tick"></ion-icon>
-              </ion-button>
-              <ion-button fill="clear" *ngIf="!task.isShowIcon" color="danger" (click)="onPause($event, task)">
-                <ion-icon name="pause"></ion-icon>
-              </ion-button>
-              <ion-button fill="clear" *ngIf="task.isShowIcon" color="danger" (click)="onResume($event, task)">
-                <ion-icon name="refresh"></ion-icon>
-              </ion-button>
-            </div>
-          </div>
-        </ion-item>
-        
+
+        <ion-item-sliding *ngFor="let task of group.tasks">
+          <ion-item button (click)="toggleTimer($event, task)">
+            <ion-label>{{ task.name }}</ion-label>
+            <ion-icon *ngIf="!task.isShowIcon" slot="end" name="checkmark-circle"></ion-icon>
+          </ion-item>
+          <ion-item-options side="end">
+            <ion-item-option color="primary" expandable (click)="redirectToListData(false, task)">
+              Data
+            </ion-item-option>
+          </ion-item-options>
+        </ion-item-sliding>
       </ion-card-content>
     </ion-card>
   </ng-container>
-</ion-content>
-
 
   <ion-button (click)="exportToCSV()">
     <ion-icon name="ellipsis-vertical"></ion-icon>
